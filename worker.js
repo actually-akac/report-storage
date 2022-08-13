@@ -114,7 +114,6 @@ async function handleRequest(req, url) {
   else if (path == "/find" && req.method == "GET") {
     let search = url.searchParams;
     let filter = Object.fromEntries(search);
-    console.log(filter);
 
     if (Object.keys(filter).length== 0) return errorResponse("Missing a URL search query.", 400);
 
