@@ -6,7 +6,7 @@ A Cloudflare Worker script for MongoDB Atlas to store Replit accounts that have 
 Now that both of us have automation tools for abuse reporting, it's possible that we submit duplicates.<br>
 This database works as a centralized place to inform other tools which users have already been reported.
 
-## Environment Variables
+## Environment variables
 - `APP_ID` - the application ID of your Data API database
 - `KEY` - the API key for your Data API database
 - `MONGO_COLLECTION`, `MONGO_DATABASE`, `MONGO_SOURCE` - where to save inserted documents
