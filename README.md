@@ -41,8 +41,7 @@ Takes the Replit account's ID, username and report reason as mandatory arguments
 
 - ❌ Error
 
-Returns a 400-500 status code.
-Exceptions are directly serialized into the response. If they are not JSON, they are serialized as the `text` property.
+Returns a 400-500 status code. Errors are serialized as the `error` property.
 
 ### GET `/find`
 Search for a reported user by `id`, `username` or `reason`. This query is provided through URL search parameters.
@@ -73,5 +72,4 @@ In the case of the query not finding a match, `found` will be false and `data` n
 
 - ❌ Error
 
-Returns a 400-500 status code.
-Exceptions are directly serialized into the response. If they are not JSON, they are serialized as the `text` property.
+Returns a 400-500 status code. Errors are serialized as the `error` property.
