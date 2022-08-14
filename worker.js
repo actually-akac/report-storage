@@ -104,7 +104,6 @@ async function handleRequest(req, url) {
     delete obj.id;
 
     let action = await mongo.insert(MONGO_COLLECTION, MONGO_DATABASE, MONGO_SOURCE, obj);
-    console.log(action);
     if (!action.success) return errorResponse(action.data.text, 500);
 
     return jsonResponse({
@@ -119,7 +118,6 @@ async function handleRequest(req, url) {
     if (Object.keys(filter).length== 0) return errorResponse("Missing a URL search query.", 400);
 
     let action = await mongo.find(MONGO_COLLECTION, MONGO_DATABASE, MONGO_SOURCE, filter);
-    console.log(action);
     if (!action.success) return errorResponse(action.data.text, 500);
 
     let doc = action.data.document; 
