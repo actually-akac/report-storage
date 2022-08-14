@@ -1,5 +1,9 @@
 addEventListener("fetch", event => event.respondWith(handleRequest(event.request, new URL(event.request.url))));
 
+function errorResponse(error, status = 400) {
+    return jsonResponse({ error }, status);
+}
+
 function jsonResponse(obj, status = 200) {
   return new Response(JSON.stringify(obj), {
     status,
@@ -7,10 +11,6 @@ function jsonResponse(obj, status = 200) {
       "Content-Type": "application/json; charset=utf-8"
     }
   })
-}
-
-function errorResponse(body, status, useJson = false) {
-  return new Response(body, { status });
 }
 
 const mongoHeaders = {
@@ -76,18 +76,18 @@ async function handleRequest(req, url) {
   }
   else if (path == "/insert" && req.method == "POST") {
     let contributor = req.headers.get("X-Identity");
-    if (!contributor) return errorResponse("Missing the \"X-Identity\" header.", 400);
+    if (!contributor) return errorResponse("Missing the \"X-Identity\" header.");
 
     let contentType = req.headers.get("Content-Type");
-    if (!contentType) return errorResponse("Missing the \"Content-Type\" header.", 400);
-    if (!contentType.startsWith("application/json")) return errorResponse("Body is not JSON.", 400);
+    if (!contentType) return errorResponse("Missing the \"Content-Type\" header.");
+    if (!contentType.startsWith("application/json")) return errorResponse("Body is not JSON.");
 
     let obj;
 
     try {
       obj = await req.json();
     }
-    catch (err) { return errorResponse("Invalid JSON.", 400); }
+    catch (err) { return errorResponse("Invalid JSON."); }
 
     if (
       typeof obj.id != "number" ||
@@ -95,7 +95,7 @@ async function handleRequest(req, url) {
       typeof obj.reason != "string" ||
       (obj.tags && typeof obj.tags != "object")
     )
-    return errorResponse("Invalid JSON payload.", 400);
+    return errorResponse("Invalid JSON payload.");
 
     if (!obj.tags) obj.tags = [ ];
 
@@ -104,7 +104,8 @@ async function handleRequest(req, url) {
     delete obj.id;
 
     let action = await mongo.insert(MONGO_COLLECTION, MONGO_DATABASE, MONGO_SOURCE, obj);
-    if (!action.success) return jsonResponse(action.data, 500);
+    console.log(action);
+    if (!action.success) return errorResponse(action.data.text, 500);
 
     return jsonResponse({
       documentId: action.data.insertedId,
@@ -118,7 +119,8 @@ async function handleRequest(req, url) {
     if (Object.keys(filter).length== 0) return errorResponse("Missing a URL search query.", 400);
 
     let action = await mongo.find(MONGO_COLLECTION, MONGO_DATABASE, MONGO_SOURCE, filter);
-    if (!action.success) return jsonResponse(action.data, 500);
+    console.log(action);
+    if (!action.success) return errorResponse(action.data.text, 500);
 
     let doc = action.data.document; 
     if (doc != null) {
